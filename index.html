@@ -226,7 +226,23 @@ body{
 }
 .dropzone label{cursor:pointer}
 .dropzone input[type=file]{display:none}
-.filename{display:none;width:100%;margin-top:10px;padding:8px}
+.filename{
+  display:none;
+  width:100%;
+  margin-top:12px;
+  padding:12px 14px;
+  font-size:14px;
+  border:1px solid #D1D5DB;
+  border-radius:8px;
+  background:#fff;
+  color:#0F2D56;
+  box-sizing:border-box;
+}
+.filename:focus{
+  outline:none;
+  border-color:#0F2D56;
+}
+
 .confirm{display:none;width:100%;margin-top:10px;padding:10px;background:#0F2D56;color:#fff;border:none;border-radius:6px}
 </style>
 </head>
@@ -418,9 +434,11 @@ function renderDocList(cat){
 function showDoc(cat,type,count){
   let html=`
     <div class="back-btn" onclick="renderDocList('${cat}')">
-      <i class="fa-solid fa-arrow-left"></i> Back
-    </div>
-    <strong>${type}</strong><br><br>
+  <i class="fa-solid fa-arrow-left"></i> 
+  <strong>Back</strong>
+</div>
+<br><br>
+
   `;
 
   if(count){
@@ -438,16 +456,34 @@ function showDoc(cat,type,count){
     }
   }
 
-  html+=`
+    html+=`
     <div class="dropzone">
       <label>
-        <input type="file">
-        Upload file
+        <input type="file" onchange="handleFile(this)">
+        <div style="font-weight:600;">Upload file</div>
+        <div style="font-size:12px;color:#6B7280;">
+          PDF / DOCX / XLSX • ≤ 15MB
+        </div>
       </label>
-      <input class="filename">
+
+      <input class="filename" placeholder="Edit file name before saving">
+
       <button class="confirm">Continue</button>
     </div>`;
+
   drawerBody.innerHTML=html;
+}
+function handleFile(input){
+  const file = input.files[0];
+  if(!file) return;
+
+  const dropzone = input.closest(".dropzone");
+  const filenameInput = dropzone.querySelector(".filename");
+  const confirmBtn = dropzone.querySelector(".confirm");
+
+  filenameInput.value = file.name;
+  filenameInput.style.display = "block";
+  confirmBtn.style.display = "block";
 }
 
 function closeDrawer(){
