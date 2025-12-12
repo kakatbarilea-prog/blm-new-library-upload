@@ -13,6 +13,10 @@ body{
   background:#ffffff;
   color:#0F2D56;
 }
+.page-wrap{
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
 /* Header */
 .header{
@@ -26,8 +30,11 @@ body{
 
 /* Layout */
 .container{
-  padding:22px 26px;
+  max-width: 1200px;   /* or 1100px / 1280px */
+  margin: 0 auto;      /* centers it */
+  padding: 22px 26px;
 }
+
 
 /* Recommendation */
 .recommend-box{
@@ -225,6 +232,7 @@ body{
 </head>
 
 <body>
+<div class="page-wrap">
 
 <div class="header">Legal Document Library</div>
 
@@ -261,6 +269,7 @@ body{
     </header>
     <div class="body" id="drawerBody"></div>
   </div>
+</div>
 </div>
 
 <script>
