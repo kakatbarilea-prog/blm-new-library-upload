@@ -2,90 +2,154 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BLM Document Upload – Realistic Mock</title>
+<title>Legal Document Library – Inline Upload Flow</title>
 
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 body{
-  font-family: Calibri, sans-serif;
-  background:#F5F6F8;
-  padding:80px;
+  margin:0;
+  font-family: Calibri, Arial, sans-serif;
+  background:#ffffff;
   color:#0F2D56;
 }
-button{font-family:Calibri,sans-serif}
 
-/* Trigger */
-.upload-btn{
-  background:#0F2D56;color:#fff;
-  padding:14px 26px;border-radius:10px;
-  font-size:16px;font-weight:600;
-  border:none;cursor:pointer;
-}
-
-/* Popup */
-.overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.45);
-  display:none;align-items:center;justify-content:center;
-  z-index:9999;
-}
-.popup{
-  background:#fff;width:760px;
-  border-radius:16px;padding:28px;
-  position:relative;
-}
-.popup h2{margin:0;font-size:26px}
-.popup p{color:#6B7280;margin:6px 0 18px}
-.close{
-  position:absolute;top:18px;right:18px;
-  cursor:pointer;font-size:22px;
+/* Header */
+.header{
+  background:#17345C;
+  color:#fff;
+  padding:18px 0;
+  text-align:center;
+  font-size:18px;
+  font-weight:600;
 }
 
-/* Search */
-.search{
-  width:100%;padding:14px;
-  border-radius:12px;border:1px solid #d5d7dc;
+/* Layout */
+.container{
+  padding:22px 26px;
+}
+
+/* Recommendation */
+.recommend-box{
+  background:#F2FAFF;
+  border-radius:14px;
+  padding:20px 24px;
+  border-left:4px solid #0F2D56;
+  margin-bottom:26px;
+}
+.recommend-box h3{
+  margin:0 0 10px;
   font-size:15px;
+  font-weight:700;
+  color:#000;
+}
+.recommend-box p{
+  margin:0 0 10px;
+  font-size:14px;
+  color:#000;
+}
+.recommend-box em{
+  font-style:italic;
+}
+.recommend-box a{
+  display:inline-block;
+  margin-top:14px;
+  font-size:14px;
+  font-weight:600;
+  color:#0F2D56;
+  text-decoration:none;
 }
 
-/* Categories */
-.categories{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:14px;margin-top:22px;
+/* Actions */
+.actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
-.categories button{
-  background:#fff;border:1px solid #0F2D56;
-  color:#0F2D56;padding:14px;
-  border-radius:14px;font-weight:600;
-  cursor:pointer;text-align:left;
+.actions input{
+  width:320px;
+  padding:10px 12px;
+  font-size:14px;
+  border:1px solid #7A7A7A;
+  border-radius:2px;
 }
-.categories button:hover{background:#EDF2FA}
+.buttons{
+  display:flex;
+  gap:12px;
+}
+.btn-primary{
+  background:#0F2D56;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  font-size:14px;
+  font-weight:600;
+  border-radius:3px;
+  cursor:pointer;
+}
+.btn-secondary{
+  background:#fff;
+  color:#000;
+  border:1px solid #7A7A7A;
+  padding:10px 18px;
+  font-size:14px;
+  border-radius:3px;
+  cursor:pointer;
+}
 
-/* Plain search results */
+/* Category section */
+.category-label{
+  margin-top:22px;
+  font-size:14px;
+  font-weight:700;
+  display:none;
+}
+
+/* Category bubbles */
+.bubbles{
+  display:none;
+  margin-top:10px;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.bubble{
+  padding:10px 16px;
+  border-radius:999px;
+  background:#EDF2FA;
+  border:1px solid #0F2D56;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.bubble:hover{background:#DDE8FA}
+
+/* Search results */
 .search-results{
   margin-top:18px;
+  display:none;
 }
-.search-results .result-item{
+.search-item{
   padding:10px 6px;
   border-bottom:1px solid #E5E7EB;
   cursor:pointer;
 }
-.search-results .result-item:hover{
+.search-item:hover{
   background:#F0F4FF;
 }
 
 /* Drawer */
 .drawer-overlay{
-  position:fixed;inset:0;
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.45);
-  display:none;justify-content:flex-end;
-  z-index:10000;
+  display:none;
+  justify-content:flex-end;
+  z-index:1000;
 }
 .drawer{
-  width:440px;height:100%;
+  width:440px;
+  height:100%;
   background:#fff;
   box-shadow:-4px 0 14px rgba(0,0,0,.15);
   transform:translateX(100%);
@@ -95,9 +159,11 @@ button{font-family:Calibri,sans-serif}
 }
 .drawer-overlay.active .drawer{transform:translateX(0)}
 .drawer header{
-  padding:16px;border-bottom:1px solid #E5E7EB;
-  display:flex;justify-content:space-between;
+  padding:16px;
+  border-bottom:1px solid #E5E7EB;
   font-weight:700;
+  display:flex;
+  justify-content:space-between;
 }
 .drawer .body{
   padding:16px;
@@ -105,7 +171,7 @@ button{font-family:Calibri,sans-serif}
   flex:1;
 }
 
-/* Back button */
+/* Back */
 .back-btn{
   font-size:14px;
   font-weight:600;
@@ -114,19 +180,24 @@ button{font-family:Calibri,sans-serif}
   align-items:center;
   gap:6px;
   margin-bottom:12px;
-  color:#0F2D56;
 }
 
 /* Doc Types */
 .doc-type{
-  padding:14px;border:1px solid #E5E7EB;
-  border-radius:10px;margin-bottom:12px;
+  padding:14px;
+  border:1px solid #E5E7EB;
+  border-radius:10px;
+  margin-bottom:12px;
   cursor:pointer;
 }
 .doc-type:hover{background:#F0F4FF}
-.doc-type small{display:block;color:#6B7280;font-size:13px}
+.doc-type small{
+  display:block;
+  color:#6B7280;
+  font-size:13px;
+}
 
-/* Existing files */
+/* Files */
 .file-row{
   padding:10px 12px;
   border:1px solid #E5E7EB;
@@ -135,77 +206,54 @@ button{font-family:Calibri,sans-serif}
   font-size:14px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  align-items:flex-start;
 }
 
 /* Upload */
 .dropzone{
   border:2px dashed #E5E7EB;
-  border-radius:12px;padding:18px;
-  text-align:center;margin-top:18px;
+  border-radius:12px;
+  padding:18px;
+  text-align:center;
+  margin-top:18px;
 }
 .dropzone label{cursor:pointer}
 .dropzone input[type=file]{display:none}
-
-.filename{
-  width:100%;
-  border:1px solid #E5E7EB;
-  border-radius:8px;
-  padding:10px;
-  margin-top:12px;
-  display:none;
-}
-.confirm{
-  width:100%;
-  margin-top:12px;
-  padding:12px;
-  background:#0F2D56;
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  font-weight:600;
-  cursor:pointer;
-  display:none;
-}
-.loader{
-  width:26px;height:26px;
-  border:3px solid #eee;
-  border-top:3px solid #0F2D56;
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-  margin:16px auto;
-  display:none;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.empty{
-  color:#6B7280;
-  margin-top:18px;
-  text-align:center;
-}
+.filename{display:none;width:100%;margin-top:10px;padding:8px}
+.confirm{display:none;width:100%;margin-top:10px;padding:10px;background:#0F2D56;color:#fff;border:none;border-radius:6px}
 </style>
 </head>
 
 <body>
 
-<button class="upload-btn" onclick="openPopup()">Upload Documents</button>
+<div class="header">Legal Document Library</div>
 
-<!-- POPUP -->
-<div id="popup" class="overlay">
-  <div class="popup">
-    <span class="close" onclick="closePopup()">×</span>
-    <h2>Add or Manage Documents</h2>
-    <p>Select a category to upload or manage documents.</p>
+<div class="container">
 
-    <input class="search" placeholder="Search document types…" oninput="searchDocs(this.value)">
-    <div class="categories" id="categoryGrid"></div>
-    <div class="search-results" id="searchResults"></div>
-    <div id="noResults" class="empty" style="display:none;">No document types match your search.</div>
+  <div class="recommend-box">
+    <h3>Recommended Legal Assets</h3>
+    <p>Based on your survey responses and your conversation with our principal consultant, we recommend uploading:</p>
+    <em>Operating Agreement, Independent Contractor Agreement, IP Assignment Form</em>
+    <a href="#">Start a New Matter</a>
   </div>
+
+  <div class="actions">
+    <input type="text" placeholder="Search documents..." oninput="searchDocs(this.value)">
+    <div class="buttons">
+      <button class="btn-primary" onclick="toggleBubbles()">Upload</button>
+      <button class="btn-secondary">Download Selected</button>
+    </div>
+  </div>
+
+  <div class="search-results" id="searchResults"></div>
+
+  <div class="category-label" id="categoryLabel">Document Types Categories</div>
+  <div class="bubbles" id="bubbles"></div>
+
 </div>
 
-<!-- DRAWER -->
-<div id="drawerOverlay" class="drawer-overlay" onclick="closeDrawer()">
+<!-- Drawer -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()">
   <div class="drawer" onclick="event.stopPropagation()">
     <header>
       <span id="drawerTitle"></span>
@@ -216,141 +264,127 @@ button{font-family:Calibri,sans-serif}
 </div>
 
 <script>
-
-/* =============================
-   DOCUMENT TAXONOMY
-============================= */
+/* FULL TAXONOMY */
 const docs = {
-"Corporate Formation & Governance":[
-"Governance Policy","Board Resolutions","Partner List","Partnership Agreement",
-"Initial Board List","Board Meeting Minutes","IRS Form 2553",
-"Shareholder List","EIN Confirmation Letter","Member List",
-"Articles of Organization","Shareholder Agreement","Corporate Bylaws",
-"Beneficial Ownership Information Report","Formation Document",
-"Board Agreements","Cap Table","Operating Agreement"
-],
-"Contracts & Agreements":[
-"User Agreement","Scope of Work","Return/Refund Policy","Relevant Agreements",
-"Related Contract","Prior Lease","Prior Investment Agreements",
-"Existing or Expired Agreements","Engagement Summary","Engagement Letter",
-"Dispute Resolution Terms","Warranty","Repair Contract",
-"Vendor Services Agreement","Terms of Service","Vendor Engagement Letter",
-"Reseller Agreement","Consulting Agreement","Non-Disclosure Agreement (NDA)",
-"Custom Legal Document","Sales Agreement","Co-Counsel Agreements",
-"BLG Retainer","BLM Retainer","Contractor Agreement"
-],
-"Intellectual Property":[
-"USPTO Correspondence","Trademark Registration Certificate",
-"Patent Application or Issued Patent","IP Assignment Agreement",
-"Trademark Application or Legal Opinion","Patent Filing or Legal Opinion"
-],
-"Compliance & Regulatory":[
-"Regulatory Text","Key Company Policies","Data Security Policy",
-"Data Collection Practices","Cookie Policy","Conflict of Interest Policy",
-"Compliance Checklist","Approval Letter","Access Logs",
-"Compliance Summary Report","Legal Assessment Memo",
-"Legal Review Summary","Privacy Policy"
-],
-"Financial & Investment":[
-"Pricing Terms","Performance Reports",
-"Investor Deck or Term Sheet","Draft Term Sheet",
-"Audited Financial Statements"
-],
-"Employment, HR & Policies":[
-"Prior Disciplinary History","Job Classifications","Internal Policy Documents",
-"Employee NDAs","Employee Acknowledgment",
-"Company Handbook","Benefits Overview","Company Policies",
-"Job Description","Termination Letter",
-"Investigation Summary","Employment Agreement",
-"Employee Handbook"
-],
-"Marketing, Communications & Branding":[
-"Landing Pages","Content Calendar","Ad Content","Brand Guidelines",
-"Social Media Asset","Marketing Collateral",
-"Legal Content Newsletter","Marketing Materials"
-],
-"Property & Real Estate":[
-"Zoning Approval Documents","Tenant/Guarantor Info",
-"Rent Structure","Commercial Lease Agreement"
-],
-"Operational & Project Materials":[
-"Supporting Issue Description","Project Summary","Meeting Agenda",
-"Counterparty Information","Client Communication","Matter Materials"
-],
-"Litigation & Disputes":[
-"Witness Statements","Settlement Discussions","Pleadings",
-"Incident Reports","Garnishment Order",
-"Discovery Timeline","Discovery Documents",
-"Court Orders","Case Docket","Litigation Strategy Report"
-],
-"Evidence, Incident & Supporting Materials":[
-"Image/Video File","Photos of Damages","Repair Invoice or Work Order"
-]
+  "Corporate Formation & Governance":[
+    "Governance Policy","Board Resolutions","Partner List","Partnership Agreement",
+    "Initial Board List","Board Meeting Minutes","IRS Form 2553","Shareholder List",
+    "EIN Confirmation Letter","Member List","Articles of Organization",
+    "Shareholder Agreement","Corporate Bylaws",
+    "Beneficial Ownership Information Report","Formation Document",
+    "Board Agreements","Cap Table","Operating Agreement"
+  ],
+  "Contracts & Agreements":[
+    "User Agreement","Scope of Work","Return/Refund Policy","Relevant Agreements",
+    "Related Contract","Prior Lease","Prior Investment Agreements",
+    "Existing or Expired Agreements","Engagement Summary","Engagement Letter",
+    "Dispute Resolution Terms","Warranty","Repair Contract",
+    "Vendor Services Agreement","Terms of Service","Vendor Engagement Letter",
+    "Reseller Agreement","Consulting Agreement",
+    "Non-Disclosure Agreement (NDA)","Custom Legal Document","Sales Agreement",
+    "Co-Counsel Agreements","BLG Retainer","BLM Retainer","Contractor Agreement"
+  ],
+  "Intellectual Property":[
+    "USPTO Correspondence","Trademark Registration Certificate",
+    "Patent Application or Issued Patent","IP Assignment Agreement",
+    "Trademark Application or Legal Opinion","Patent Filing or Legal Opinion"
+  ],
+  "Compliance & Regulatory":[
+    "Regulatory Text","Key Company Policies","Data Security Policy",
+    "Data Collection Practices","Cookie Policy","Conflict of Interest Policy",
+    "Compliance Checklist","Approval Letter","Access Logs",
+    "Compliance Summary Report","Legal Assessment Memo",
+    "Legal Review Summary","Privacy Policy"
+  ],
+  "Financial & Investment":[
+    "Pricing Terms","Performance Reports",
+    "Investor Deck or Term Sheet","Draft Term Sheet",
+    "Audited Financial Statements"
+  ],
+  "Employment, HR & Policies":[
+    "Prior Disciplinary History","Job Classifications","Internal Policy Documents",
+    "Employee NDAs","Employee Acknowledgment","Company Handbook",
+    "Benefits Overview","Company Policies","Job Description",
+    "Termination Letter","Investigation Summary",
+    "Employment Agreement","Employee Handbook"
+  ],
+  "Marketing, Communications & Branding":[
+    "Landing Pages","Content Calendar","Ad Content","Brand Guidelines",
+    "Social Media Asset","Marketing Collateral",
+    "Legal Content Newsletter","Marketing Materials"
+  ],
+  "Property & Real Estate":[
+    "Zoning Approval Documents","Tenant/Guarantor Info",
+    "Rent Structure","Commercial Lease Agreement"
+  ],
+  "Operational & Project Materials":[
+    "Supporting Issue Description","Project Summary","Meeting Agenda",
+    "Counterparty Information","Client Communication","Matter Materials"
+  ],
+  "Litigation & Disputes":[
+    "Witness Statements","Settlement Discussions","Pleadings",
+    "Incident Reports","Garnishment Order","Discovery Timeline",
+    "Discovery Documents","Court Orders","Case Docket",
+    "Litigation Strategy Report"
+  ],
+  "Evidence, Incident & Supporting Materials":[
+    "Image/Video File","Photos of Damages","Repair Invoice or Work Order"
+  ]
 };
 
-
-
-/* Random file counts */
+/* Mock file counts */
 const fileCounts = {};
 Object.values(docs).flat().forEach(d=>{
-  fileCounts[d] = Math.floor(Math.random()*4);
+  fileCounts[d]=Math.floor(Math.random()*3);
 });
 
-/* INIT */
-const grid=document.getElementById("categoryGrid");
-renderCategories();
+const bubbleWrap=document.getElementById("bubbles");
+const categoryLabel=document.getElementById("categoryLabel");
+const searchResults=document.getElementById("searchResults");
 
-/* CONTROLS */
-function openPopup(){popup.style.display="flex"}
-function closePopup(){popup.style.display="none"}
+/* Render bubbles */
+Object.keys(docs).forEach(cat=>{
+  const b=document.createElement("div");
+  b.className="bubble";
+  b.innerText=cat;
+  b.onclick=()=>openDrawer(cat);
+  bubbleWrap.appendChild(b);
+});
 
-function renderCategories(filter=""){
-  grid.innerHTML="";
-  searchResults.innerHTML="";
-  let matches=0;
-
-  Object.keys(docs).forEach(cat=>{
-    const hasMatch = docs[cat].some(d=>d.toLowerCase().includes(filter));
-    if(filter && !hasMatch) return;
-
-    matches++;
-    const b=document.createElement("button");
-    b.innerText=cat;
-    b.onclick=()=>openDrawer(cat);
-    grid.appendChild(b);
-  });
-
-  noResults.style.display = matches ? "none" : "block";
+function toggleBubbles(){
+  const show = bubbleWrap.style.display!=="flex";
+  bubbleWrap.style.display = show ? "flex" : "none";
+  categoryLabel.style.display = show ? "block" : "none";
+  searchResults.style.display="none";
 }
 
-/* Search behavior */
 function searchDocs(q){
-  q=q.toLowerCase();
-  grid.innerHTML="";
+  q=q.toLowerCase().trim();
   searchResults.innerHTML="";
+
   if(!q){
-    renderCategories();
+    searchResults.style.display="none";
     return;
   }
 
-  let results=0;
+  bubbleWrap.style.display="none";
+  categoryLabel.style.display="none";
+  searchResults.style.display="block";
+
   Object.keys(docs).forEach(cat=>{
     docs[cat].forEach(d=>{
       if(d.toLowerCase().includes(q)){
-        results++;
-        const r=document.createElement("div");
-        r.className="result-item";
-        r.innerText=d;
-        r.onclick=()=>{
+        const item=document.createElement("div");
+        item.className="search-item";
+        item.innerText=d;
+        item.onclick=()=>{
           openDrawer(cat);
           showDoc(cat,d,fileCounts[d]);
         };
-        searchResults.appendChild(r);
+        searchResults.appendChild(item);
       }
     });
   });
-
-  noResults.style.display = results ? "none" : "block";
 }
 
 function openDrawer(cat){
@@ -363,82 +397,53 @@ function openDrawer(cat){
 function renderDocList(cat){
   drawerBody.innerHTML="";
   docs[cat].forEach(d=>{
-    const count=fileCounts[d];
+    const c=fileCounts[d];
     const div=document.createElement("div");
     div.className="doc-type";
-    div.innerHTML=`${d}<small>${count?count+" files":"No files uploaded"}</small>`;
-    div.onclick=()=>showDoc(cat,d,count);
+    div.innerHTML=`${d}<small>${c?c+" files":"No files uploaded"}</small>`;
+    div.onclick=()=>showDoc(cat,d,c);
     drawerBody.appendChild(div);
   });
 }
 
-function closeDrawer(){
-  drawerOverlay.classList.remove("active");
-  setTimeout(()=>drawerOverlay.style.display="none",300);
-}
-
-/* Show document */
 function showDoc(cat,type,count){
   let html=`
     <div class="back-btn" onclick="renderDocList('${cat}')">
-      <i class="fa-solid fa-arrow-left"></i> 
+      <i class="fa-solid fa-arrow-left"></i> Back
     </div>
-    <strong>Back</strong><br><br>
+    <strong>${type}</strong><br><br>
   `;
 
   if(count){
     for(let i=1;i<=count;i++){
+      const base = type.replace(/[^a-zA-Z0-9]+/g,"_");
+      const name = i===1 ? `${base}_2024.pdf` : `${base}_New.pdf`;
       html+=`
         <div class="file-row">
-          ${type.replace(/ /g,"_")}_${i}.pdf
+          <div>
+            <div>${name}</div>
+            <div style="font-size:12px;color:#6B7280;">Uploaded on Mar ${10+i}, 2024</div>
+          </div>
           <i class="fa-regular fa-eye"></i>
         </div>`;
     }
-  } else {
-    html+=`<div class="empty">No documents uploaded yet.</div>`;
   }
 
   html+=`
     <div class="dropzone">
       <label>
-        <input type="file" onchange="handleFile(this)">
-        <div>Upload file</div>
-        <div style="font-size:12px;color:#6B7280;">PDF / DOCX / XLSX • ≤ 15MB</div>
+        <input type="file">
+        Upload file
       </label>
       <input class="filename">
       <button class="confirm">Continue</button>
-      <div class="loader"></div>
-    </div>
-  `;
-
+    </div>`;
   drawerBody.innerHTML=html;
 }
 
-/* Upload behavior */
-function handleFile(input){
-  const file=input.files[0];
-  if(!file)return;
-
-  const dz=input.closest(".dropzone");
-  const name=dz.querySelector(".filename");
-  const btn=dz.querySelector(".confirm");
-  const loader=dz.querySelector(".loader");
-
-  name.value=file.name;
-  name.style.display="block";
-  btn.style.display="block";
-
-  btn.onclick=()=>{
-    btn.style.display="none";
-    name.style.display="none";
-    loader.style.display="block";
-
-    setTimeout(()=>{
-      loader.style.display="none";
-      drawerOverlay.classList.remove("active");
-      drawerOverlay.style.display="none";
-    },900);
-  };
+function closeDrawer(){
+  drawerOverlay.classList.remove("active");
+  setTimeout(()=>drawerOverlay.style.display="none",300);
 }
 </script>
 
