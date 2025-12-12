@@ -198,7 +198,6 @@ button{font-family:Calibri,sans-serif}
     <p>Select a category to upload or manage documents.</p>
 
     <input class="search" placeholder="Search document types…" oninput="searchDocs(this.value)">
-
     <div class="categories" id="categoryGrid"></div>
     <div class="search-results" id="searchResults"></div>
     <div id="noResults" class="empty" style="display:none;">No document types match your search.</div>
@@ -382,9 +381,9 @@ function closeDrawer(){
 function showDoc(cat,type,count){
   let html=`
     <div class="back-btn" onclick="renderDocList('${cat}')">
-      <i class="fa-solid fa-arrow-left"></i> Back
+      <i class="fa-solid fa-arrow-left"></i> 
     </div>
-    <strong>${type}</strong><br><br>
+    <strong>Back</strong><br><br>
   `;
 
   if(count){
