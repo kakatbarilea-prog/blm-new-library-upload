@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,16 +111,17 @@ body{
   margin-top:22px;
   font-size:14px;
   font-weight:700;
-  display:none;
+  display:block;
 }
 
 /* Category bubbles */
 .bubbles{
-  display:none;
+  display:flex;
   margin-top:10px;
   gap:12px;
   flex-wrap:wrap;
 }
+
 .bubble{
   padding:10px 16px;
   border-radius:999px;
@@ -244,6 +247,103 @@ body{
 }
 
 .confirm{display:none;width:100%;margin-top:10px;padding:10px;background:#0F2D56;color:#fff;border:none;border-radius:6px}
+
+/* Filter drawer controls */
+.filter-group{
+  margin-bottom:14px;
+  position:relative;
+}
+.category-dropdown{
+  position:relative;
+  border:1px solid #D1D5DB;
+  border-radius:6px;
+  padding:8px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  background:#fff;
+}
+
+.category-selected{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  font-size:13px;
+}
+
+.category-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 8px;
+  background:#EDF2FA;
+  border:1px solid #0F2D56;
+  border-radius:999px;
+  font-weight:600;
+}
+
+.category-pill i{
+  font-size:11px;
+  cursor:pointer;
+}
+
+.category-options{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:#fff;
+  border:1px solid #D1D5DB;
+  border-radius:6px;
+  margin-top:6px;
+  max-height:220px;
+  overflow-y:auto;
+  display:none;
+  z-index:20;
+}
+
+.category-option{
+  padding:8px 10px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.category-option:hover{
+  background:#F0F4FF;
+}
+
+.clear-filter{
+  position:absolute;
+  right:10px;
+  top:36px;
+  font-size:13px;
+  color:#6B7280;
+  cursor:pointer;
+}
+.clear-filter:hover{
+  color:#0F2D56;
+}
+
+.filter-group label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+.filter-group input,
+.filter-group select{
+  width:100%;
+  padding:10px 12px;
+  font-size:14px;
+  border:1px solid #D1D5DB;
+  border-radius:6px;
+  box-sizing:border-box;
+}
+.filter-results{
+  margin-top:16px;
+}
+
 </style>
 </head>
 
@@ -264,9 +364,11 @@ body{
   <div class="actions">
     <input type="text" placeholder="Search documents..." oninput="searchDocs(this.value)">
     <div class="buttons">
-      <button class="btn-primary" onclick="toggleBubbles()">Upload</button>
-      <button class="btn-secondary">Download Selected</button>
-    </div>
+  <button class="btn-primary" onclick="openDrawerAll()">Upload</button>
+  <button class="btn-secondary" onclick="openDrawerFilter()">Filter</button>
+  <button class="btn-secondary">Download Selected</button>
+</div>
+
   </div>
 
   <div class="search-results" id="searchResults"></div>
@@ -283,7 +385,8 @@ body{
       <span id="drawerTitle"></span>
       <span style="cursor:pointer" onclick="closeDrawer()">Close</span>
     </header>
-    <div class="body" id="drawerBody"></div>
+    <div class="body" id="drawerBody" onclick="handleDrawerClick(event)"></div>
+
   </div>
 </div>
 </div>
@@ -366,22 +469,31 @@ Object.values(docs).flat().forEach(d=>{
 const bubbleWrap=document.getElementById("bubbles");
 const categoryLabel=document.getElementById("categoryLabel");
 const searchResults=document.getElementById("searchResults");
+let drawerMode = "category"; // category | all | filter
+let activeCategory = null;
+
+/* Drawer state memory */
+let lastDrawerView = null; // "category" | "all" | "filter"
+let filterState = {
+  search: "",
+  categories: []   // array of selected categories
+};
+
+
 
 /* Render bubbles */
 Object.keys(docs).forEach(cat=>{
   const b=document.createElement("div");
   b.className="bubble";
   b.innerText=cat;
-  b.onclick=()=>openDrawer(cat);
+b.onclick=()=>{
+  drawerMode = "category";
+  activeCategory = cat;
+  openDrawerCategory(cat);
+};
   bubbleWrap.appendChild(b);
 });
 
-function toggleBubbles(){
-  const show = bubbleWrap.style.display!=="flex";
-  bubbleWrap.style.display = show ? "flex" : "none";
-  categoryLabel.style.display = show ? "block" : "none";
-  searchResults.style.display="none";
-}
 
 function searchDocs(q){
   q=q.toLowerCase().trim();
@@ -411,13 +523,38 @@ function searchDocs(q){
     });
   });
 }
+function openDrawerCategory(cat){
+  lastDrawerView = "category";
+  activeCategory = cat;
 
-function openDrawer(cat){
-  drawerTitle.innerText=cat;
+  drawerTitle.innerText = cat;
   renderDocList(cat);
+  openDrawerShell();
+}
+
+
+function openDrawerAll(){
+  lastDrawerView = "all";
+
+  drawerTitle.innerText = "All Document Types";
+  renderAllDocs();
+  openDrawerShell();
+}
+
+function openDrawerFilter(){
+  lastDrawerView = "filter";
+
+  drawerTitle.innerText = "Filter Document Types";
+  renderFilterView();
+  openDrawerShell();
+}
+
+
+function openDrawerShell(){
   drawerOverlay.style.display="flex";
   setTimeout(()=>drawerOverlay.classList.add("active"),10);
 }
+
 
 function renderDocList(cat){
   drawerBody.innerHTML="";
@@ -430,16 +567,163 @@ function renderDocList(cat){
     drawerBody.appendChild(div);
   });
 }
+function renderAllDocs(){
+  drawerBody.innerHTML = "";
+
+  Object.keys(docs).forEach(cat=>{
+    const heading = document.createElement("h4");
+    heading.style.margin = "16px 0 8px";
+    heading.innerText = cat;
+    drawerBody.appendChild(heading);
+
+    docs[cat].forEach(d=>{
+      const c = fileCounts[d];
+      const div = document.createElement("div");
+      div.className = "doc-type";
+      div.innerHTML = `${d}<small>${c ? c+" files" : "No files uploaded"}</small>`;
+      div.onclick = ()=>showDoc(cat,d,c);
+      drawerBody.appendChild(div);
+    });
+  });
+}
+function renderFilterView(){
+  drawerBody.innerHTML = `
+    <div class="filter-group">
+      <label>Search document types</label>
+      <input
+        type="text"
+        id="filterSearch"
+        placeholder="Type to search..."
+        value="${filterState.search}"
+        oninput="applyFilter()"
+      >
+    </div>
+
+    <div class="filter-group">
+      <label>Filter by category</label>
+
+      <div
+  class="category-dropdown"
+  onclick="toggleCategoryDropdown(event)"
+>
+  <div class="category-selected" id="categorySelected">
+    ${
+      filterState.categories.length
+        ? filterState.categories.map(cat => `
+          <span class="category-pill">
+            ${cat}
+            <i class="fa-solid fa-xmark"
+               onclick="removeCategoryFilter('${cat.replace(/'/g,"\\'")}'); event.stopPropagation();">
+            </i>
+          </span>
+        `).join("")
+        : `<span style="color:#6B7280;">All categories</span>`
+    }
+  </div>
+
+  <i class="fa-solid fa-chevron-down" style="font-size:12px;color:#6B7280;"></i>
+
+  <div class="category-options" id="categoryOptions">
+    ${Object.keys(docs)
+      .filter(cat => !filterState.categories.includes(cat))
+      .map(cat => `
+        <div class="category-option" onclick="addCategoryFilter('${cat.replace(/'/g,"\\'")}')">
+          ${cat}
+        </div>
+      `).join("")}
+  </div>
+</div>
+
+    </div>
+
+    <div class="filter-results" id="filterResults"></div>
+  `;
+
+  applyFilter();
+}
+
+
+function applyFilter(){
+  const searchInput = document.getElementById("filterSearch");
+  if(!searchInput) return;
+
+  filterState.search = searchInput.value.toLowerCase();
+
+  const results = document.getElementById("filterResults");
+  results.innerHTML = "";
+
+  Object.keys(docs).forEach(cat=>{
+    // If categories are selected, only allow matching categories
+    if(filterState.categories.length && !filterState.categories.includes(cat)) return;
+
+    docs[cat].forEach(type=>{
+      // Search filter
+      if(filterState.search && !type.toLowerCase().includes(filterState.search)) return;
+
+      const c = fileCounts[type];
+      const div = document.createElement("div");
+      div.className = "doc-type";
+      div.innerHTML = `${type}<small>${c ? c+" files" : "No files uploaded"}</small>`;
+      div.onclick = ()=>showDoc(cat,type,c);
+      results.appendChild(div);
+    });
+  });
+
+  if(!results.innerHTML){
+    results.innerHTML = `<div style="font-size:13px;color:#6B7280;">No matching documents</div>`;
+  }
+}
+
+
+function addCategoryFilter(category){
+  if(!category) return;
+
+  if(!filterState.categories.includes(category)){
+    filterState.categories.push(category);
+  }
+
+  renderFilterView();
+}
+
+function removeCategoryFilter(category){
+  filterState.categories = filterState.categories.filter(c => c !== category);
+  renderFilterView();
+}
+function toggleCategoryDropdown(e){
+  e.stopPropagation();
+
+  const menu = document.getElementById("categoryOptions");
+  const isOpen = menu.style.display === "block";
+
+  menu.style.display = isOpen ? "none" : "block";
+}
+
+function handleDrawerClick(e){
+  const dropdown = document.querySelector(".category-dropdown");
+  const options = document.getElementById("categoryOptions");
+
+  if(!dropdown || !options) return;
+
+  // If clicking anywhere inside the drawer BUT outside the dropdown
+  if(!dropdown.contains(e.target)){
+    options.style.display = "none";
+  }
+}
+
+
 
 function showDoc(cat,type,count){
-  let html=`
-    <div class="back-btn" onclick="renderDocList('${cat}')">
-  <i class="fa-solid fa-arrow-left"></i> 
-  <strong>Back</strong>
-</div>
-<br><br>
+    drawerTitle.innerText = type;
 
-  `;
+let html = `
+  <div class="back-btn" onclick="handleDrawerBack()">
+    <i class="fa-solid fa-arrow-left"></i>
+    <strong>Back</strong>
+  </div>
+  <br><br>
+`;
+
+
 
   if(count){
     for(let i=1;i<=count;i++){
@@ -473,6 +757,28 @@ function showDoc(cat,type,count){
 
   drawerBody.innerHTML=html;
 }
+
+function handleDrawerBack(){
+  if(lastDrawerView === "all"){
+    drawerTitle.innerText = "All Document Types";
+    renderAllDocs();
+    return;
+  }
+
+  if(lastDrawerView === "filter"){
+    drawerTitle.innerText = "Filter Document Types";
+    renderFilterView();
+    return;
+  }
+
+  if(lastDrawerView === "category" && activeCategory){
+    drawerTitle.innerText = activeCategory;
+    renderDocList(activeCategory);
+    return;
+  }
+}
+
+
 function handleFile(input){
   const file = input.files[0];
   if(!file) return;
