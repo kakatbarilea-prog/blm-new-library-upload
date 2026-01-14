@@ -1,6 +1,4 @@
-
-
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -110,7 +108,7 @@ body{
 .category-label{
   margin-top:22px;
   font-size:14px;
-  font-weight:700;
+  font-weight:500;
   display:block;
 }
 
@@ -344,6 +342,197 @@ body{
   margin-top:16px;
 }
 
+/* ==========================================================
+   NEW: Upload Area (ON PAGE, NOT DRAWER)
+   ========================================================== */
+.upload-area{
+  display:none;
+  margin-top:16px;
+  border:1px solid #E5E7EB;
+  border-radius:14px;
+  padding:18px;
+  background:#fff;
+}
+/* removed redundant heading/paragraph per instruction */
+.upload-drop{
+  border:2px dashed #D1D5DB;
+  border-radius:12px;
+  padding:22px;
+  text-align:center;
+  cursor:pointer;
+}
+.upload-drop:hover{
+  background:#F7F8FB;
+}
+.upload-drop strong{
+  display:block;
+  font-size:14px;
+}
+.upload-drop span{
+  display:block;
+  font-size:12px;
+  color:#6B7280;
+  margin-top:6px;
+}
+.upload-drop input[type=file]{display:none}
+
+/* ==========================================================
+   NEW: Drawer Upload Activity + Pills
+   ========================================================== */
+.upload-activity{
+  border:1px solid #E5E7EB;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  background:#fff;
+}
+.upload-activity .title{
+  font-size:13px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.upload-item{
+  padding:10px;
+  border:1px solid #EEF0F5;
+  border-radius:12px;
+  background:#F7F8FB;
+  margin-bottom:10px;
+}
+.upload-item:last-child{margin-bottom:0}
+
+.upload-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+.upload-name-edit{
+  width:100%;
+  font-size:13px;
+  font-weight:500;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid #D1D5DB;
+  box-sizing:border-box;
+  color:#0F2D56;
+  background:#fff;
+}
+.upload-name-edit.is-loading{
+  color:#9CA3AF;
+  background:#F3F4F6;
+}
+.upload-name-edit:focus{
+  outline:none;
+  border-color:#0F2D56;
+  box-shadow:0 0 0 3px rgba(15,45,86,0.10);
+}
+
+/* Loader positioned next to filename */
+.loader-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  flex-shrink:0;
+}
+.loader-circle{
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  border:3px solid #E5E7EB;
+  border-top-color:#0F2D56;
+  animation:spin 0.9s linear infinite;
+}
+@keyframes spin{
+  to{ transform:rotate(360deg); }
+}
+
+.doc-type-tag{
+  margin-top:10px;
+  font-size:12px;
+  color:#6B7280;
+}
+.doc-type-tag b{color:#0F2D56}
+
+/* Document type quick search (inside upload drawer) */
+.type-search{
+  margin: 6px 0 10px 0;
+  position:relative;
+}
+.type-search input{
+  width:100%;
+  padding:10px 12px;
+  font-size:13px;
+  border:1px solid #D1D5DB;
+  border-radius:10px;
+  box-sizing:border-box;
+}
+.type-search input:focus{
+  outline:none;
+  border-color:#0F2D56;
+  box-shadow:0 0 0 3px rgba(15,45,86,0.10);
+}
+
+.pill-section-title{
+  font-size:13px;
+  font-weight:700;
+  margin: 10px 0 8px 0;
+}
+
+.pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+/* Category pills */
+.pill{
+  padding:9px 12px;
+  border-radius:999px;
+  background:#EDF2FA;
+  border:1px solid #0F2D56;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.pill:hover{background:#DDE8FA}
+
+/* Document type pills different styling */
+.pill.doc-pill{
+  background:#ffffff;
+  color:#0F2D56;
+  border:1px solid #0F2D56;
+}
+.pill.doc-pill:hover{
+  background:#F7F8FB;
+}
+
+.complete-upload-btn{
+  width:100%;
+  margin-top:12px;
+  background:#0F2D56;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:12px 14px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+.complete-upload-btn:hover{
+  background:#0c2343;
+}
+.complete-upload-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
 </style>
 </head>
 
@@ -364,17 +553,32 @@ body{
   <div class="actions">
     <input type="text" placeholder="Search documents..." oninput="searchDocs(this.value)">
     <div class="buttons">
-  <button class="btn-primary" onclick="openDrawerAll()">Upload</button>
-  <button class="btn-secondary" onclick="openDrawerFilter()">Filter</button>
-  <button class="btn-secondary">Download Selected</button>
-</div>
-
+      <button class="btn-primary" onclick="openUploadArea()">Upload</button>
+      <button class="btn-secondary" onclick="openDrawerFilter()">Filter</button>
+      <button class="btn-secondary">Download Selected</button>
+    </div>
   </div>
 
   <div class="search-results" id="searchResults"></div>
 
-  <div class="category-label" id="categoryLabel">Document Types Categories</div>
-  <div class="bubbles" id="bubbles"></div>
+  <!-- Pills hidden first (your instruction) -->
+  <div class="category-label" id="categoryLabel" style="display:none;">Document Types Categories</div>
+  <div class="bubbles" id="bubbles" style="display:none;"></div>
+
+  <!-- Upload Area (NOT part of drawer) -->
+  <div class="upload-area" id="uploadArea">
+    <div class="upload-drop"
+      id="uploadDrop"
+      ondragover="uploadDragOver(event)"
+      ondragleave="uploadDragLeave(event)"
+      ondrop="uploadDropFiles(event)"
+      onclick="document.getElementById('uploadFileInput').click()"
+    >
+      <input id="uploadFileInput" type="file" multiple onchange="handleNewFiles(this.files)">
+      <strong>Drag & Drop files here</strong>
+      <span>or click to choose files • PDF / DOCX / XLSX • ≤ 15MB</span>
+    </div>
+  </div>
 
 </div>
 
@@ -386,9 +590,9 @@ body{
       <span style="cursor:pointer" onclick="closeDrawer()">Close</span>
     </header>
     <div class="body" id="drawerBody" onclick="handleDrawerClick(event)"></div>
-
   </div>
 </div>
+
 </div>
 
 <script>
@@ -469,31 +673,39 @@ Object.values(docs).flat().forEach(d=>{
 const bubbleWrap=document.getElementById("bubbles");
 const categoryLabel=document.getElementById("categoryLabel");
 const searchResults=document.getElementById("searchResults");
-let drawerMode = "category"; // category | all | filter
-let activeCategory = null;
 
 /* Drawer state memory */
-let lastDrawerView = null; // "category" | "all" | "filter"
+let lastDrawerView = null; // "upload" | "filter" etc
+
 let filterState = {
   search: "",
-  categories: []   // array of selected categories
+  categories: []
 };
 
+/* ==========================================================
+   Upload Flow State (BATCH)
+   ========================================================== */
+let uploadBatch = []; // {id, originalName, editedName, status, progress, docType, loading}
+let uploadUI = {
+  step: "categories", // categories | doctypes
+  activeCategory: null,
+  appliedDocType: null
+};
 
+let drawerSearchLock = false; // prevents re-render focus loss
 
-/* Render bubbles */
+/* ==========================================================
+   Search (unchanged behavior)
+   ========================================================== */
 Object.keys(docs).forEach(cat=>{
   const b=document.createElement("div");
   b.className="bubble";
   b.innerText=cat;
-b.onclick=()=>{
-  drawerMode = "category";
-  activeCategory = cat;
-  openDrawerCategory(cat);
-};
+  b.onclick=()=>{
+    // left as-is (unused for this revised upload flow)
+  };
   bubbleWrap.appendChild(b);
 });
-
 
 function searchDocs(q){
   q=q.toLowerCase().trim();
@@ -515,77 +727,291 @@ function searchDocs(q){
         item.className="search-item";
         item.innerText=d;
         item.onclick=()=>{
-          openDrawer(cat);
-          showDoc(cat,d,fileCounts[d]);
+          // left as-is
         };
         searchResults.appendChild(item);
       }
     });
   });
 }
-function openDrawerCategory(cat){
-  lastDrawerView = "category";
-  activeCategory = cat;
 
-  drawerTitle.innerText = cat;
-  renderDocList(cat);
-  openDrawerShell();
+/* ==========================================================
+   Upload Area (ON PAGE)
+   ========================================================== */
+function openUploadArea(){
+  document.getElementById("uploadArea").style.display = "block";
+  // IMPORTANT: drawer should NOT open yet (your instruction)
 }
 
-
-function openDrawerAll(){
-  lastDrawerView = "all";
-
-  drawerTitle.innerText = "All Document Types";
-  renderAllDocs();
-  openDrawerShell();
+function uploadDragOver(e){
+  e.preventDefault();
+  document.getElementById("uploadDrop").style.borderColor = "#0F2D56";
+}
+function uploadDragLeave(e){
+  document.getElementById("uploadDrop").style.borderColor = "#D1D5DB";
+}
+function uploadDropFiles(e){
+  e.preventDefault();
+  document.getElementById("uploadDrop").style.borderColor = "#D1D5DB";
+  const files = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files : null;
+  if(files && files.length){
+    handleNewFiles(files);
+  }
 }
 
-function openDrawerFilter(){
-  lastDrawerView = "filter";
+function handleNewFiles(fileList){
+  const files = Array.from(fileList || []);
+  if(!files.length) return;
 
-  drawerTitle.innerText = "Filter Document Types";
-  renderFilterView();
-  openDrawerShell();
+  files.forEach(file=>{
+    const id = "f_" + Math.random().toString(16).slice(2);
+    uploadBatch.unshift({
+      id,
+      originalName: file.name,
+      editedName: file.name,
+      docType: null,
+      loading: true,
+      showLoader: true
+    });
+
+    // 3 seconds fixed loading then loader disappears
+    setTimeout(()=>{
+      const item = uploadBatch.find(x=>x.id===id);
+      if(item){
+        item.loading = false;
+        item.showLoader = false;
+        renderUploadDrawer();
+      }
+    }, 3000);
+  });
+
+  openUploadDrawer();
+  renderUploadDrawer();
 }
 
-
+/* ==========================================================
+   Drawer open/close
+   ========================================================== */
 function openDrawerShell(){
   drawerOverlay.style.display="flex";
   setTimeout(()=>drawerOverlay.classList.add("active"),10);
 }
 
-
-function renderDocList(cat){
-  drawerBody.innerHTML="";
-  docs[cat].forEach(d=>{
-    const c=fileCounts[d];
-    const div=document.createElement("div");
-    div.className="doc-type";
-    div.innerHTML=`${d}<small>${c?c+" files":"No files uploaded"}</small>`;
-    div.onclick=()=>showDoc(cat,d,c);
-    drawerBody.appendChild(div);
-  });
+function closeDrawer(){
+  drawerOverlay.classList.remove("active");
+  setTimeout(()=>drawerOverlay.style.display="none",300);
 }
-function renderAllDocs(){
-  drawerBody.innerHTML = "";
 
-  Object.keys(docs).forEach(cat=>{
-    const heading = document.createElement("h4");
-    heading.style.margin = "16px 0 8px";
-    heading.innerText = cat;
-    drawerBody.appendChild(heading);
+function openUploadDrawer(){
+  lastDrawerView = "upload";
+  drawerTitle.innerText = "Upload Documents";
+  openDrawerShell();
+  renderUploadDrawer();
+}
 
-    docs[cat].forEach(d=>{
-      const c = fileCounts[d];
-      const div = document.createElement("div");
-      div.className = "doc-type";
-      div.innerHTML = `${d}<small>${c ? c+" files" : "No files uploaded"}</small>`;
-      div.onclick = ()=>showDoc(cat,d,c);
-      drawerBody.appendChild(div);
+/* ==========================================================
+   Drawer content renderer
+   ========================================================== */
+function renderUploadDrawer(){
+  let uploadHTML = `
+    <div class="upload-activity">
+      <div class="title">
+        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Activity
+      </div>
+  `;
+
+  if(!uploadBatch.length){
+    uploadHTML += `<div style="font-size:13px;color:#6B7280;">No files uploaded yet.</div>`;
+  }else{
+    uploadBatch.forEach(f=>{
+      uploadHTML += `
+        <div class="upload-item">
+          <div class="upload-top">
+            <input class="upload-name-edit ${f.loading ? "is-loading" : ""}"
+              value="${escapeHtml(f.editedName)}"
+              oninput="updateEditedName('${f.id}', this.value)"
+            >
+            ${f.showLoader ? `
+              <div class="loader-wrap">
+                <div class="loader-circle" title="Uploading"></div>
+              </div>
+            ` : ``}
+          </div>
+
+          <div class="doc-type-tag">
+            Document Type: <b>${f.docType ? escapeHtml(f.docType) : "Not selected"}</b>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  const hasDocType = uploadBatch.length && uploadBatch.every(f=>!!f.docType);
+  const allDoneLoading = uploadBatch.length && uploadBatch.every(f=>!f.loading);
+
+  uploadHTML += `
+      <button class="complete-upload-btn"
+        ${(!uploadBatch.length || !hasDocType || !allDoneLoading) ? "disabled" : ""}
+        onclick="completeUpload()"
+      >
+        Complete Upload
+      </button>
+    </div>
+  `;
+
+  let pillsHTML = "";
+
+  if(uploadUI.step === "categories"){
+    pillsHTML += `
+      <div class="pill-section-title">Choose a Category</div>
+
+      <div class="type-search">
+        <input
+          id="docTypeSearchInput"
+          type="text"
+          placeholder="Search document types..."
+          oninput="updateTypeSearchPills(this.value)"
+        >
+      </div>
+
+      <div class="pills" id="docTypeSearchPills" style="display:none;"></div>
+
+            <div class="pills" id="categoryPillsWrap">
+        ${Object.keys(docs).map(cat=>`
+          <div class="pill" onclick="openDocTypesForCategory('${cat.replace(/'/g,"\\'")}')">
+            ${cat}
+          </div>
+        `).join("")}
+      </div>
+
+    `;
+  }else{
+    pillsHTML += `
+      <div class="back-btn" onclick="backToCategories()">
+        <i class="fa-solid fa-arrow-left"></i>
+        <strong>Back</strong>
+      </div>
+
+      <div class="pill-section-title">Choose a Document Type</div>
+      <div class="pills">
+        ${docs[uploadUI.activeCategory].map(type=>`
+          <div class="pill doc-pill" onclick="applyDocTypeToBatch('${type.replace(/'/g,"\\'")}')">
+            ${type}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  drawerBody.innerHTML = uploadHTML + pillsHTML;
+}
+
+/* ==========================================================
+   Search results IN PILLS (not list)
+   ========================================================== */
+function updateTypeSearchPills(val){
+  const q = (val || "").toLowerCase().trim();
+  const target = document.getElementById("docTypeSearchPills");
+  const categoryWrap = document.getElementById("categoryPillsWrap"); // NEW
+  if(!target) return;
+
+  // if empty search: hide results + show categories again
+  if(!q){
+    target.style.display = "none";
+    target.innerHTML = "";
+    if(categoryWrap) categoryWrap.style.display = "flex"; // NEW
+    return;
+  }
+
+  // if searching: show results + hide categories
+  if(categoryWrap) categoryWrap.style.display = "none"; // NEW
+
+  // ONLY document type strings, no category references in results
+  const matchesSet = new Set();
+  Object.values(docs).forEach(types=>{
+    types.forEach(type=>{
+      if(type.toLowerCase().includes(q)){
+        matchesSet.add(type);
+      }
     });
   });
+
+  const unique = Array.from(matchesSet).slice(0, 18);
+
+  if(!unique.length){
+    target.style.display = "flex";
+    target.innerHTML = `
+      <div class="pill doc-pill" style="cursor:default;opacity:.6;">No matches</div>
+    `;
+    return;
+  }
+
+  target.style.display = "flex";
+  target.innerHTML = unique.map(type=>`
+    <div class="pill doc-pill" onclick="applyDocTypeToBatch('${type.replace(/'/g,"\\'")}')">
+      ${type}
+    </div>
+  `).join("");
 }
+
+
+
+/* ==========================================================
+   Drawer pill interactions
+   ========================================================== */
+function openDocTypesForCategory(category){
+  uploadUI.step = "doctypes";
+  uploadUI.activeCategory = category;
+  renderUploadDrawer();
+}
+
+function backToCategories(){
+  uploadUI.step = "categories";
+  uploadUI.activeCategory = null;
+  renderUploadDrawer();
+}
+
+function applyDocTypeToBatch(docType){
+  uploadBatch = uploadBatch.map(f=>({
+    ...f,
+    docType
+  }));
+  renderUploadDrawer();
+}
+
+/* ==========================================================
+   Edit filename
+   ========================================================== */
+function updateEditedName(id,val){
+  const item = uploadBatch.find(x=>x.id===id);
+  if(item){
+    item.editedName = val;
+  }
+}
+
+/* ==========================================================
+   Complete upload
+   ========================================================== */
+function completeUpload(){
+  closeDrawer();
+  document.getElementById("uploadArea").style.display = "none";
+
+  uploadBatch = [];
+  uploadUI.step = "categories";
+  uploadUI.activeCategory = null;
+  uploadUI.appliedDocType = null;
+}
+
+/* ==========================================================
+   Existing filter drawer code (unchanged)
+   ========================================================== */
+function openDrawerFilter(){
+  lastDrawerView = "filter";
+  drawerTitle.innerText = "Filter Document Types";
+  renderFilterView();
+  openDrawerShell();
+}
+
 function renderFilterView(){
   drawerBody.innerHTML = `
     <div class="filter-group">
@@ -602,37 +1028,34 @@ function renderFilterView(){
     <div class="filter-group">
       <label>Filter by category</label>
 
-      <div
-  class="category-dropdown"
-  onclick="toggleCategoryDropdown(event)"
->
-  <div class="category-selected" id="categorySelected">
-    ${
-      filterState.categories.length
-        ? filterState.categories.map(cat => `
-          <span class="category-pill">
-            ${cat}
-            <i class="fa-solid fa-xmark"
-               onclick="removeCategoryFilter('${cat.replace(/'/g,"\\'")}'); event.stopPropagation();">
-            </i>
-          </span>
-        `).join("")
-        : `<span style="color:#6B7280;">All categories</span>`
-    }
-  </div>
-
-  <i class="fa-solid fa-chevron-down" style="font-size:12px;color:#6B7280;"></i>
-
-  <div class="category-options" id="categoryOptions">
-    ${Object.keys(docs)
-      .filter(cat => !filterState.categories.includes(cat))
-      .map(cat => `
-        <div class="category-option" onclick="addCategoryFilter('${cat.replace(/'/g,"\\'")}')">
-          ${cat}
+      <div class="category-dropdown" onclick="toggleCategoryDropdown(event)">
+        <div class="category-selected" id="categorySelected">
+          ${
+            filterState.categories.length
+              ? filterState.categories.map(cat => `
+                <span class="category-pill">
+                  ${cat}
+                  <i class="fa-solid fa-xmark"
+                     onclick="removeCategoryFilter('${cat.replace(/'/g,"\\'")}'); event.stopPropagation();">
+                  </i>
+                </span>
+              `).join("")
+              : `<span style="color:#6B7280;">All categories</span>`
+          }
         </div>
-      `).join("")}
-  </div>
-</div>
+
+        <i class="fa-solid fa-chevron-down" style="font-size:12px;color:#6B7280;"></i>
+
+        <div class="category-options" id="categoryOptions">
+          ${Object.keys(docs)
+            .filter(cat => !filterState.categories.includes(cat))
+            .map(cat => `
+              <div class="category-option" onclick="addCategoryFilter('${cat.replace(/'/g,"\\'")}')">
+                ${cat}
+              </div>
+            `).join("")}
+        </div>
+      </div>
 
     </div>
 
@@ -641,7 +1064,6 @@ function renderFilterView(){
 
   applyFilter();
 }
-
 
 function applyFilter(){
   const searchInput = document.getElementById("filterSearch");
@@ -653,18 +1075,15 @@ function applyFilter(){
   results.innerHTML = "";
 
   Object.keys(docs).forEach(cat=>{
-    // If categories are selected, only allow matching categories
     if(filterState.categories.length && !filterState.categories.includes(cat)) return;
 
     docs[cat].forEach(type=>{
-      // Search filter
       if(filterState.search && !type.toLowerCase().includes(filterState.search)) return;
 
       const c = fileCounts[type];
       const div = document.createElement("div");
       div.className = "doc-type";
       div.innerHTML = `${type}<small>${c ? c+" files" : "No files uploaded"}</small>`;
-      div.onclick = ()=>showDoc(cat,type,c);
       results.appendChild(div);
     });
   });
@@ -673,7 +1092,6 @@ function applyFilter(){
     results.innerHTML = `<div style="font-size:13px;color:#6B7280;">No matching documents</div>`;
   }
 }
-
 
 function addCategoryFilter(category){
   if(!category) return;
@@ -689,6 +1107,7 @@ function removeCategoryFilter(category){
   filterState.categories = filterState.categories.filter(c => c !== category);
   renderFilterView();
 }
+
 function toggleCategoryDropdown(e){
   e.stopPropagation();
 
@@ -704,97 +1123,18 @@ function handleDrawerClick(e){
 
   if(!dropdown || !options) return;
 
-  // If clicking anywhere inside the drawer BUT outside the dropdown
   if(!dropdown.contains(e.target)){
     options.style.display = "none";
   }
 }
 
-
-
-function showDoc(cat,type,count){
-    drawerTitle.innerText = type;
-
-let html = `
-  <div class="back-btn" onclick="handleDrawerBack()">
-    <i class="fa-solid fa-arrow-left"></i>
-    <strong>Back</strong>
-  </div>
-  <br><br>
-`;
-
-
-
-  if(count){
-    for(let i=1;i<=count;i++){
-      const base = type.replace(/[^a-zA-Z0-9]+/g,"_");
-      const name = i===1 ? `${base}_2024.pdf` : `${base}_New.pdf`;
-      html+=`
-        <div class="file-row">
-          <div>
-            <div>${name}</div>
-            <div style="font-size:12px;color:#6B7280;">Uploaded on Mar ${10+i}, 2024</div>
-          </div>
-          <i class="fa-regular fa-eye"></i>
-        </div>`;
-    }
-  }
-
-    html+=`
-    <div class="dropzone">
-      <label>
-        <input type="file" onchange="handleFile(this)">
-        <div style="font-weight:600;">Upload file</div>
-        <div style="font-size:12px;color:#6B7280;">
-          PDF / DOCX / XLSX • ≤ 15MB
-        </div>
-      </label>
-
-      <input class="filename" placeholder="Edit file name before saving">
-
-      <button class="confirm">Continue</button>
-    </div>`;
-
-  drawerBody.innerHTML=html;
-}
-
-function handleDrawerBack(){
-  if(lastDrawerView === "all"){
-    drawerTitle.innerText = "All Document Types";
-    renderAllDocs();
-    return;
-  }
-
-  if(lastDrawerView === "filter"){
-    drawerTitle.innerText = "Filter Document Types";
-    renderFilterView();
-    return;
-  }
-
-  if(lastDrawerView === "category" && activeCategory){
-    drawerTitle.innerText = activeCategory;
-    renderDocList(activeCategory);
-    return;
-  }
-}
-
-
-function handleFile(input){
-  const file = input.files[0];
-  if(!file) return;
-
-  const dropzone = input.closest(".dropzone");
-  const filenameInput = dropzone.querySelector(".filename");
-  const confirmBtn = dropzone.querySelector(".confirm");
-
-  filenameInput.value = file.name;
-  filenameInput.style.display = "block";
-  confirmBtn.style.display = "block";
-}
-
-function closeDrawer(){
-  drawerOverlay.classList.remove("active");
-  setTimeout(()=>drawerOverlay.style.display="none",300);
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 </script>
 
